@@ -1,4 +1,4 @@
-import { createInitialState } from "./logic.js";
+import { createInitialState, normalizeTreasures } from "./logic.js";
 
 const STORAGE_KEY = "riku-pet-state";
 
@@ -22,7 +22,9 @@ export const loadState = () => {
 
   try {
     const parsed = JSON.parse(saved);
-    return isPetState(parsed) ? parsed : createInitialState();
+    return isPetState(parsed)
+      ? { ...parsed, treasures: normalizeTreasures(parsed.treasures) }
+      : createInitialState();
   } catch {
     return createInitialState();
   }
@@ -35,4 +37,3 @@ export const saveState = (state) => {
 export const clearState = () => {
   window.localStorage.removeItem(STORAGE_KEY);
 };
-

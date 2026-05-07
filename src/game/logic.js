@@ -3,10 +3,16 @@ import {
   INITIAL_STATE,
   MAX_STAT,
   MIN_STAT,
-  SIMULATED_MINUTES_PER_TICK
+  SIMULATED_MINUTES_PER_TICK,
+  TREASURE_CLEANLINESS_DROP,
+  TREASURE_CLEANLINESS_RESTORE
 } from "./config.js";
 
 const clampStat = (value) => Math.max(MIN_STAT, Math.min(MAX_STAT, value));
+const clampCount = (value) => {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.floor(value));
+};
 
 const updateStats = (stats, patch) => ({
   hunger: clampStat(patch.hunger ?? stats.hunger),
@@ -25,9 +31,37 @@ const getStage = (ageMinutes) => {
   return GROWTH_STAGES[0].id;
 };
 
+export const normalizeTreasures = (treasures) => ({
+  pending: clampCount(treasures?.pending),
+  collected: clampCount(treasures?.collected),
+  cleanlinessDropBuffer: clampCount(treasures?.cleanlinessDropBuffer)
+});
+
+const awardTreasuresForCleanlinessDrop = (state, nextStats) => {
+  const treasures = normalizeTreasures(state.treasures);
+  const cleanlinessDrop = Math.max(
+    0,
+    state.stats.cleanliness - nextStats.cleanliness
+  );
+
+  if (cleanlinessDrop <= 0) {
+    return treasures;
+  }
+
+  const bufferedDrop = treasures.cleanlinessDropBuffer + cleanlinessDrop;
+  const earnedTreasures = Math.floor(bufferedDrop / TREASURE_CLEANLINESS_DROP);
+
+  return {
+    ...treasures,
+    pending: treasures.pending + earnedTreasures,
+    cleanlinessDropBuffer: bufferedDrop % TREASURE_CLEANLINESS_DROP
+  };
+};
+
 export const createInitialState = (now = Date.now()) => ({
   ...INITIAL_STATE,
   stats: { ...INITIAL_STATE.stats },
+  treasures: { ...INITIAL_STATE.treasures },
   lastUpdatedAt: now
 });
 
@@ -105,9 +139,33 @@ export const applyAction = (state, action, now = Date.now()) => {
     throw new Error(`Unknown pet action: ${action}`);
   }
 
+  const nextStats = nextStatsByAction[action];
+
   return {
     ...state,
-    stats: nextStatsByAction[action],
+    stats: nextStats,
+    treasures: awardTreasuresForCleanlinessDrop(state, nextStats),
+    lastUpdatedAt: now
+  };
+};
+
+export const collectTreasure = (state, now = Date.now()) => {
+  const treasures = normalizeTreasures(state.treasures);
+
+  if (treasures.pending <= 0) {
+    return state;
+  }
+
+  return {
+    ...state,
+    stats: updateStats(state.stats, {
+      cleanliness: state.stats.cleanliness + TREASURE_CLEANLINESS_RESTORE
+    }),
+    treasures: {
+      ...treasures,
+      pending: treasures.pending - 1,
+      collected: treasures.collected + 1
+    },
     lastUpdatedAt: now
   };
 };
@@ -132,6 +190,7 @@ export const advanceTime = (
     ageMinutes,
     stage: getStage(ageMinutes),
     stats,
+    treasures: awardTreasuresForCleanlinessDrop(state, stats),
     lastUpdatedAt: now
   };
 };

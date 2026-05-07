@@ -1,5 +1,10 @@
 import { TICK_MS } from "./game/config.js";
-import { advanceTime, applyAction, createInitialState } from "./game/logic.js";
+import {
+  advanceTime,
+  applyAction,
+  collectTreasure,
+  createInitialState
+} from "./game/logic.js";
 import { clearState, loadState, saveState } from "./game/storage.js";
 import { renderApp } from "./ui/render.js";
 
@@ -37,10 +42,15 @@ const handleReset = () => {
   commit(createInitialState());
 };
 
+const handleCollectTreasure = () => {
+  commit(collectTreasure(state));
+};
+
 function render() {
   renderApp(root, state, {
     activeAction,
     onAction: handleAction,
+    onCollectTreasure: handleCollectTreasure,
     onReset: handleReset
   });
 }

@@ -30,6 +30,11 @@ const statLabels = [
   ["cleanliness", "清潔"]
 ];
 
+const clampDisplayCount = (value) => {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.floor(value));
+};
+
 const formatAge = (ageMinutes) => {
   const hours = Math.floor(ageMinutes / 60);
   const minutes = ageMinutes % 60;
@@ -48,11 +53,32 @@ const renderStat = (label, value) => `
   </div>
 `;
 
+const renderTreasureIcon = () => `<span class="treasure-icon" aria-hidden="true"></span>`;
+
+const renderPendingTreasures = (pendingTreasures) => {
+  if (pendingTreasures <= 0) return "";
+
+  return `
+    <div class="treasure-field" aria-label="未回収の宝物">
+      ${Array.from(
+        { length: pendingTreasures },
+        (_, index) => `
+          <button class="treasure-button" type="button" data-treasure="${index}" aria-label="宝物を回収">
+            ${renderTreasureIcon()}
+          </button>
+        `
+      ).join("")}
+    </div>
+  `;
+};
+
 export const renderApp = (root, state, options) => {
   const mood = getMood(state);
   const growth = getGrowthProgress(state);
   const petArt = getPetArt(state.stage, mood);
   const activeAction = options.activeAction ?? "";
+  const pendingTreasures = clampDisplayCount(state.treasures?.pending);
+  const collectedTreasures = clampDisplayCount(state.treasures?.collected);
   const actions = Object.keys(actionLabels);
 
   root.innerHTML = `
@@ -74,12 +100,18 @@ export const renderApp = (root, state, options) => {
               : ""
           }
           <div class="shadow"></div>
+          ${renderPendingTreasures(pendingTreasures)}
         </div>
 
         <aside class="status-panel" aria-live="polite">
           <div class="status-header">
             <span class="mood-pill">${moodLabels[mood]}</span>
             <span>${growth.currentStage.label}</span>
+          </div>
+          <div class="treasure-counter" aria-label="集めた宝物: ${collectedTreasures}">
+            ${renderTreasureIcon()}
+            <span>宝物</span>
+            <strong>${collectedTreasures}</strong>
           </div>
           <p class="message">${getStatusMessage(state)}</p>
           <p class="age">年齢: ${formatAge(state.ageMinutes)}</p>
@@ -117,6 +149,12 @@ export const renderApp = (root, state, options) => {
   root.querySelectorAll("button[data-action]").forEach((button) => {
     button.addEventListener("click", () => options.onAction(button.dataset.action));
   });
+
+  if (options.onCollectTreasure) {
+    root.querySelectorAll("button[data-treasure]").forEach((button) => {
+      button.addEventListener("click", options.onCollectTreasure);
+    });
+  }
 
   root.querySelector("[data-reset]")?.addEventListener("click", options.onReset);
 };

@@ -3,6 +3,7 @@ import { describe, it } from "node:test";
 import {
   advanceTime,
   applyAction,
+  collectTreasure,
   createInitialState,
   getGrowthProgress,
   getMood
@@ -61,5 +62,74 @@ describe("pet logic", () => {
     };
 
     assert.equal(getMood(hungry), "hungry");
+  });
+
+  it("creates treasure after 10 total cleanliness points are lost", () => {
+    const state = createInitialState(1);
+    const afterFeed = applyAction(state, "feed", 2);
+    const afterSecondFeed = applyAction(afterFeed, "feed", 3);
+
+    assert.equal(afterFeed.treasures.pending, 0);
+    assert.equal(afterFeed.treasures.cleanlinessDropBuffer, 6);
+    assert.equal(afterSecondFeed.treasures.pending, 1);
+    assert.equal(afterSecondFeed.treasures.cleanlinessDropBuffer, 2);
+  });
+
+  it("combines cleanliness drops from play and time passing", () => {
+    const state = createInitialState(1);
+    const afterPlay = applyAction(state, "play", 2);
+    const afterTime = advanceTime(afterPlay, 12, 3);
+
+    assert.equal(afterPlay.treasures.pending, 0);
+    assert.equal(afterPlay.treasures.cleanlinessDropBuffer, 8);
+    assert.equal(afterTime.treasures.pending, 1);
+    assert.equal(afterTime.treasures.cleanlinessDropBuffer, 0);
+  });
+
+  it("does not create treasure when cleaning increases cleanliness", () => {
+    const state = {
+      ...createInitialState(1),
+      stats: { hunger: 72, happiness: 70, energy: 80, cleanliness: 50 },
+      treasures: { pending: 0, collected: 0, cleanlinessDropBuffer: 8 }
+    };
+    const cleaned = applyAction(state, "clean", 2);
+
+    assert.equal(cleaned.stats.cleanliness, 80);
+    assert.equal(cleaned.treasures.pending, 0);
+    assert.equal(cleaned.treasures.cleanlinessDropBuffer, 8);
+  });
+
+  it("uses actual clamped cleanliness loss for treasure progress", () => {
+    const state = {
+      ...createInitialState(1),
+      stats: { hunger: 72, happiness: 70, energy: 80, cleanliness: 4 },
+      treasures: { pending: 0, collected: 0, cleanlinessDropBuffer: 5 }
+    };
+    const played = applyAction(state, "play", 2);
+
+    assert.equal(played.stats.cleanliness, 0);
+    assert.equal(played.treasures.pending, 0);
+    assert.equal(played.treasures.cleanlinessDropBuffer, 9);
+  });
+
+  it("collects pending treasure and restores cleanliness", () => {
+    const state = {
+      ...createInitialState(1),
+      stats: { hunger: 72, happiness: 70, energy: 80, cleanliness: 98 },
+      treasures: { pending: 2, collected: 4, cleanlinessDropBuffer: 3 }
+    };
+    const collected = collectTreasure(state, 2);
+
+    assert.equal(collected.treasures.pending, 1);
+    assert.equal(collected.treasures.collected, 5);
+    assert.equal(collected.treasures.cleanlinessDropBuffer, 3);
+    assert.equal(collected.stats.cleanliness, 100);
+    assert.equal(collected.lastUpdatedAt, 2);
+  });
+
+  it("does not change state when collecting without pending treasure", () => {
+    const state = createInitialState(1);
+
+    assert.strictEqual(collectTreasure(state, 2), state);
   });
 });

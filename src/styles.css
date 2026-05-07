@@ -210,6 +210,86 @@ h1 {
   bottom: 72px;
 }
 
+.treasure-field {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  z-index: 3;
+  width: min(76%, 340px);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transform: translateX(-50%);
+}
+
+.treasure-button {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 1px solid rgb(71 58 34 / 36%);
+  border-radius: 999px;
+  background: rgb(255 253 248 / 88%);
+  box-shadow: 0 8px 18px rgb(61 48 32 / 16%);
+  cursor: pointer;
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    background-color 150ms ease;
+}
+
+.treasure-button:hover {
+  border-color: var(--warm);
+  background: #fff7da;
+  transform: translateY(-3px) scale(1.04);
+}
+
+.treasure-button:focus-visible {
+  outline: 3px solid rgb(47 143 131 / 34%);
+  outline-offset: 3px;
+}
+
+.treasure-icon {
+  width: 18px;
+  height: 18px;
+  display: inline-block;
+  border: 2px solid #473a22;
+  border-radius: 5px 5px 7px 7px;
+  background:
+    linear-gradient(135deg, rgb(255 255 255 / 62%) 0 28%, transparent 29%),
+    linear-gradient(135deg, #8fd9c8 0 50%, #2f8f83 51% 100%);
+  box-shadow: inset -2px -3px 0 rgb(31 108 101 / 22%);
+  transform: rotate(45deg);
+}
+
+.treasure-counter {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--ink);
+  background: #f7fbf5;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.treasure-counter .treasure-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.treasure-counter strong {
+  margin-left: auto;
+  font-size: 1.1rem;
+}
+
 .status-panel {
   padding: 24px;
   display: grid;

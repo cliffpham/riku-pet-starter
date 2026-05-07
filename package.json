@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "node scripts/dev-server.mjs",
-    "check": "node --check src/main.js && node --check src/game/logic.js && node --check src/ui/render.js && node --check src/ui/pet-art.js && node --check scripts/dev-server.mjs && node --check scripts/generate-pet-assets.mjs",
-    "test": "node --test src/game/logic.test.js src/ui/pet-art.test.js"
+    "check": "node --check src/main.js && node --check src/game/logic.js && node --check src/game/storage.js && node --check src/ui/render.js && node --check src/ui/pet-art.js && node --check scripts/dev-server.mjs && node --check scripts/generate-pet-assets.mjs",
+    "test": "node --test src/game/logic.test.js src/game/storage.test.js src/ui/pet-art.test.js"
   },
   "engines": {
     "node": ">=22.12"
