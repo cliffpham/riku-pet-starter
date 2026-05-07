@@ -1,4 +1,4 @@
-import { getMood, getStatusMessage } from "../game/logic.js";
+import { getGrowthProgress, getMood, getStatusMessage } from "../game/logic.js";
 
 const actionLabels = {
   feed: "ごはん",
@@ -42,6 +42,7 @@ const renderStat = (label, value) => `
 
 export const renderApp = (root, state, options) => {
   const mood = getMood(state);
+  const growth = getGrowthProgress(state);
   const actions = Object.keys(actionLabels);
 
   root.innerHTML = `
@@ -63,10 +64,24 @@ export const renderApp = (root, state, options) => {
         <aside class="status-panel" aria-live="polite">
           <div class="status-header">
             <span class="mood-pill">${moodLabels[mood]}</span>
-            <span>${state.stage}</span>
+            <span>${growth.currentStage.label}</span>
           </div>
           <p class="message">${getStatusMessage(state)}</p>
           <p class="age">年齢: ${formatAge(state.ageMinutes)}</p>
+          <div class="growth-program">
+            <div class="growth-program__header">
+              <span>成長プログラム</span>
+              <strong>${growth.progressPercent}%</strong>
+            </div>
+            <div class="growth-track" aria-label="成長進捗: ${growth.progressPercent}%">
+              <span style="width: ${growth.progressPercent}%"></span>
+            </div>
+            <div class="growth-program__steps">
+              <span>${growth.currentStage.label}</span>
+              <span>${growth.nextStage?.label ?? "完了"}</span>
+            </div>
+            <p class="growth-program__message">${growth.message}</p>
+          </div>
           <div class="stats">
             ${statLabels.map(([key, label]) => renderStat(label, state.stats[key])).join("")}
           </div>
@@ -90,4 +105,3 @@ export const renderApp = (root, state, options) => {
 
   root.querySelector("[data-reset]")?.addEventListener("click", options.onReset);
 };
-

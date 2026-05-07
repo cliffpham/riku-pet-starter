@@ -1,4 +1,5 @@
 import {
+  GROWTH_STAGES,
   INITIAL_STATE,
   MAX_STAT,
   MIN_STAT,
@@ -15,9 +16,13 @@ const updateStats = (stats, patch) => ({
 });
 
 const getStage = (ageMinutes) => {
-  if (ageMinutes >= 80) return "kid";
-  if (ageMinutes >= 30) return "baby";
-  return "egg";
+  for (let index = GROWTH_STAGES.length - 1; index >= 0; index -= 1) {
+    if (ageMinutes >= GROWTH_STAGES[index].startsAt) {
+      return GROWTH_STAGES[index].id;
+    }
+  }
+
+  return GROWTH_STAGES[0].id;
 };
 
 export const createInitialState = (now = Date.now()) => ({
@@ -32,6 +37,42 @@ export const getMood = (state) => {
   if (state.stats.energy < 30) return "tired";
   if (state.stats.happiness > 70) return "happy";
   return "okay";
+};
+
+export const getGrowthProgress = (state) => {
+  const stageId = getStage(state.ageMinutes);
+  const currentStageIndex = GROWTH_STAGES.findIndex(
+    (stage) => stage.id === stageId
+  );
+  const normalizedIndex = currentStageIndex >= 0 ? currentStageIndex : 0;
+  const currentStage = GROWTH_STAGES[normalizedIndex];
+  const nextStage = GROWTH_STAGES[normalizedIndex + 1] ?? null;
+
+  if (!nextStage) {
+    return {
+      currentStage,
+      nextStage: null,
+      minutesToNext: 0,
+      progressPercent: 100,
+      message: "成長プログラムを完了しました。"
+    };
+  }
+
+  const stageDuration = nextStage.startsAt - currentStage.startsAt;
+  const elapsedInStage = Math.max(0, state.ageMinutes - currentStage.startsAt);
+  const minutesToNext = Math.max(0, nextStage.startsAt - state.ageMinutes);
+  const progressPercent = Math.min(
+    100,
+    Math.round((elapsedInStage / stageDuration) * 100)
+  );
+
+  return {
+    currentStage,
+    nextStage,
+    minutesToNext,
+    progressPercent,
+    message: `${nextStage.label}まであと${minutesToNext}分です。`
+  };
 };
 
 export const applyAction = (state, action, now = Date.now()) => {
@@ -106,4 +147,3 @@ export const getStatusMessage = (state) => {
 
   return messages[getMood(state)];
 };
-
