@@ -1,0 +1,14 @@
+{
+  "name": "riku-pet-starter",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev-server.mjs",
+    "check": "node --check src/main.js && node --check src/game/logic.js && node --check src/ui/render.js && node --check scripts/dev-server.mjs",
+    "test": "node --test src/game/logic.test.js"
+  },
+  "engines": {
+    "node": ">=22.12"
+  }
+}
