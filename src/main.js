@@ -10,6 +10,8 @@ if (!root) {
 }
 
 let state = loadState();
+let activeAction = null;
+let activeActionTimer = null;
 
 const commit = (nextState) => {
   state = nextState;
@@ -18,16 +20,26 @@ const commit = (nextState) => {
 };
 
 const handleAction = (action) => {
+  activeAction = action;
+  window.clearTimeout(activeActionTimer);
   commit(applyAction(state, action));
+
+  activeActionTimer = window.setTimeout(() => {
+    activeAction = null;
+    render();
+  }, 900);
 };
 
 const handleReset = () => {
+  activeAction = null;
+  window.clearTimeout(activeActionTimer);
   clearState();
   commit(createInitialState());
 };
 
 function render() {
   renderApp(root, state, {
+    activeAction,
     onAction: handleAction,
     onReset: handleReset
   });

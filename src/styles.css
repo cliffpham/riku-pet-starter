@@ -142,6 +142,64 @@ h1 {
   animation-name: wobble;
 }
 
+.pet-stage[data-action="feed"] .pet-image {
+  animation: eat 900ms ease-in-out;
+}
+
+.pet-stage[data-action="play"] .pet-image {
+  animation: play 900ms cubic-bezier(0.2, 0.8, 0.25, 1);
+}
+
+.pet-stage[data-action="clean"] .pet-image {
+  animation: clean 900ms ease-in-out;
+}
+
+.pet-stage[data-action="nap"] .pet-image {
+  animation: nap 900ms ease-in-out;
+}
+
+.action-effect {
+  position: absolute;
+  top: 58px;
+  left: 50%;
+  z-index: 2;
+  min-width: 88px;
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  color: var(--ink);
+  background: rgb(255 253 248 / 92%);
+  box-shadow: 0 10px 24px rgb(61 48 32 / 14%);
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-align: center;
+  transform: translateX(-50%);
+  animation: effect-pop 900ms ease both;
+}
+
+.pet-stage[data-action="feed"] .action-effect {
+  color: #7a3f17;
+}
+
+.pet-stage[data-action="play"] .action-effect {
+  color: var(--accent-strong);
+}
+
+.pet-stage[data-action="clean"] .action-effect {
+  color: #2d6e92;
+}
+
+.pet-stage[data-action="nap"] .action-effect {
+  color: #5b5475;
+}
+
+.pet-stage[data-action="feed"] .shadow,
+.pet-stage[data-action="play"] .shadow,
+.pet-stage[data-action="clean"] .shadow,
+.pet-stage[data-action="nap"] .shadow {
+  animation: shadow-pulse 900ms ease-in-out;
+}
+
 .shadow {
   width: 168px;
   height: 22px;
@@ -309,6 +367,90 @@ h1 {
   }
   50% {
     transform: rotate(2deg) translateY(-8px);
+  }
+}
+
+@keyframes eat {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  25%,
+  65% {
+    transform: translateY(4px) scale(1.06, 0.94);
+  }
+  45% {
+    transform: translateY(-10px) scale(0.96, 1.08);
+  }
+}
+
+@keyframes play {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  35% {
+    transform: translateY(-46px) rotate(-8deg);
+  }
+  65% {
+    transform: translateY(-14px) rotate(7deg);
+  }
+}
+
+@keyframes clean {
+  0%,
+  100% {
+    transform: translateX(0) rotate(0deg);
+    filter: drop-shadow(0 14px 18px rgb(38 32 24 / 16%));
+  }
+  25% {
+    transform: translateX(-18px) rotate(-4deg);
+  }
+  50% {
+    transform: translateX(18px) rotate(4deg);
+    filter: brightness(1.1) drop-shadow(0 14px 18px rgb(38 32 24 / 16%));
+  }
+  75% {
+    transform: translateX(-10px) rotate(-2deg);
+  }
+}
+
+@keyframes nap {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  35%,
+  70% {
+    transform: translateY(18px) rotate(2deg) scale(0.96);
+  }
+}
+
+@keyframes effect-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 12px) scale(0.92);
+  }
+  18%,
+  72% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -12px) scale(0.98);
+  }
+}
+
+@keyframes shadow-pulse {
+  0%,
+  100% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  45% {
+    transform: scaleX(0.72);
+    opacity: 0.68;
   }
 }
 

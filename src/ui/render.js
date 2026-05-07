@@ -8,6 +8,13 @@ const actionLabels = {
   nap: "ねる"
 };
 
+const actionEffectLabels = {
+  feed: "もぐもぐ",
+  play: "ジャンプ",
+  clean: "ぴかぴか",
+  nap: "すやすや"
+};
+
 const moodLabels = {
   happy: "ごきげん",
   okay: "ふつう",
@@ -45,6 +52,7 @@ export const renderApp = (root, state, options) => {
   const mood = getMood(state);
   const growth = getGrowthProgress(state);
   const petArt = getPetArt(state.stage, mood);
+  const activeAction = options.activeAction ?? "";
   const actions = Object.keys(actionLabels);
 
   root.innerHTML = `
@@ -58,8 +66,13 @@ export const renderApp = (root, state, options) => {
       </div>
 
       <div class="playfield">
-        <div class="pet-stage" data-mood="${mood}" data-stage="${state.stage}">
+        <div class="pet-stage" data-mood="${mood}" data-stage="${state.stage}" data-action="${activeAction}">
           <img class="pet-image" src="${petArt.src}" alt="${state.name}の${petArt.alt}" />
+          ${
+            activeAction
+              ? `<div class="action-effect" aria-hidden="true">${actionEffectLabels[activeAction]}</div>`
+              : ""
+          }
           <div class="shadow"></div>
         </div>
 
@@ -101,7 +114,7 @@ export const renderApp = (root, state, options) => {
     </section>
   `;
 
-  root.querySelectorAll("[data-action]").forEach((button) => {
+  root.querySelectorAll("button[data-action]").forEach((button) => {
     button.addEventListener("click", () => options.onAction(button.dataset.action));
   });
 
