@@ -1,0 +1,66 @@
+<svg width="256" height="256" viewBox="0 0 256 256" role="img" aria-labelledby="title desc" xmlns="http://www.w3.org/2000/svg">
+  <title id="title">baby alien sleepy</title>
+  <desc id="desc">A cute alien virtual pet in the baby growth stage with a tired mood.</desc>
+  <defs>
+    <linearGradient id="skin" x1="72" x2="188" y1="54" y2="224" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#d9fff2"/>
+      <stop offset=".52" stop-color="#8fd9c8"/>
+      <stop offset="1" stop-color="#3e9f94"/>
+    </linearGradient>
+    <linearGradient id="warm" x1="70" x2="182" y1="70" y2="224" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#fff7da"/>
+      <stop offset="1" stop-color="#e8b956"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .body{fill:url(#skin);stroke:#473a22;stroke-width:8;stroke-linejoin:round}
+    .belly,.shine{fill:#f7fff1;opacity:.52}
+    .panel,.collar,.shell{fill:url(#warm);stroke:#473a22;stroke-width:6;stroke-linejoin:round}
+    .antenna,.arm,.foot,.boot{fill:none;stroke:#473a22;stroke-width:8;stroke-linecap:round;stroke-linejoin:round}
+    .antenna-dot,.cheek{fill:#e97972;stroke:#473a22;stroke-width:6}
+    .eye,.mouth{fill:none;stroke:#2f2b26;stroke-width:7;stroke-linecap:round;stroke-linejoin:round}
+    .eye-fill{fill:#2f2b26}
+    .eye-glint{fill:#fffdf8}
+    .open-mouth{fill:#2f2b26}
+    .orbit{fill:none;stroke:#d98247;stroke-width:7;opacity:.55}
+    .spark,.snack{fill:#f3d984;stroke:#473a22;stroke-width:5;stroke-linejoin:round}
+    .snack-mark,.dirt-line,.crack,.crack-light,.sleep-tilt,.belly-rumble{fill:none;stroke:#473a22;stroke-width:5;stroke-linecap:round;stroke-linejoin:round}
+    .crack-light{opacity:.35}
+    .dirt{fill:#6f675c;opacity:.75}
+    .sleep{font:700 24px system-ui,sans-serif;fill:#6f675c}
+    .sleep-large{font-size:34px}
+  </style>
+  <g class="pet" transform="translate(0 11) rotate(-5 128 152) scale(0.82) translate(28.097560975609753 30.292682926829286)">
+    
+    <g transform="translate(32 35.5) scale(0.75)" opacity="1">
+      <path class="arm" d="M82 143c-18 14-23 31-14 43"/>
+      <path class="arm" d="M174 143c18 14 23 31 14 43"/>
+    </g>
+  
+    
+      <path class="antenna" d="M113 72c2-18 18-27 34-19"/>
+      <circle class="antenna-dot" cx="151" cy="54" r="8"/>
+    
+    
+      <ellipse class="body" cx="128" cy="130" rx="60" ry="64"/>
+      <path class="belly" d="M86 149c11 30 73 30 84 0 4 35-17 61-42 61s-46-26-42-61Z"/>
+      <path class="shell" d="M88 188l19 16 20-15 20 15 21-16v34H88Z"/>
+    
+    
+    
+      <path class="eye" d="M96 124h24"/>
+      <path class="eye" d="M136 124h24"/>
+    
+    <path class="mouth" d="M115 154c8 4 18 4 26 0"/>
+    <circle class="cheek" cx="84" cy="147" r="10" opacity=".65"/>
+    <circle class="cheek" cx="172" cy="147" r="10" opacity=".65"/>
+    
+      <ellipse class="foot" cx="102" cy="217" rx="17" ry="9"/>
+      <ellipse class="foot" cx="154" cy="217" rx="17" ry="9"/>
+    
+  </g>
+  
+      <text class="sleep" x="186" y="76">z</text>
+      <text class="sleep sleep-large" x="204" y="57">Z</text>
+    
+</svg>

@@ -118,13 +118,23 @@ h1 {
 .pet-image {
   width: min(58vw, 250px);
   max-width: 70%;
+  height: auto;
   z-index: 1;
   animation: float 2.2s ease-in-out infinite;
+  filter: drop-shadow(0 14px 18px rgb(38 32 24 / 16%));
+}
+
+.pet-stage[data-stage="egg"] .pet-image {
+  width: min(52vw, 230px);
+}
+
+.pet-stage[data-stage="adult"] .pet-image {
+  width: min(62vw, 270px);
 }
 
 .pet-stage[data-mood="tired"] .pet-image {
   animation-duration: 3.4s;
-  filter: saturate(0.85);
+  filter: saturate(0.85) drop-shadow(0 14px 18px rgb(38 32 24 / 16%));
 }
 
 .pet-stage[data-mood="hungry"] .pet-image,

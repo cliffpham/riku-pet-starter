@@ -1,4 +1,5 @@
 import { getGrowthProgress, getMood, getStatusMessage } from "../game/logic.js";
+import { getPetArt } from "./pet-art.js";
 
 const actionLabels = {
   feed: "ごはん",
@@ -43,6 +44,7 @@ const renderStat = (label, value) => `
 export const renderApp = (root, state, options) => {
   const mood = getMood(state);
   const growth = getGrowthProgress(state);
+  const petArt = getPetArt(state.stage, mood);
   const actions = Object.keys(actionLabels);
 
   root.innerHTML = `
@@ -56,8 +58,8 @@ export const renderApp = (root, state, options) => {
       </div>
 
       <div class="playfield">
-        <div class="pet-stage" data-mood="${mood}">
-          <img class="pet-image" src="public/pet-egg.svg" alt="${state.name}のペット" />
+        <div class="pet-stage" data-mood="${mood}" data-stage="${state.stage}">
+          <img class="pet-image" src="${petArt.src}" alt="${state.name}の${petArt.alt}" />
           <div class="shadow"></div>
         </div>
 
