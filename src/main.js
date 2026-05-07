@@ -3,7 +3,8 @@ import {
   advanceTime,
   applyAction,
   collectTreasure,
-  createInitialState
+  createInitialState,
+  useTreasure
 } from "./game/logic.js";
 import { clearState, loadState, saveState } from "./game/storage.js";
 import { renderApp } from "./ui/render.js";
@@ -17,6 +18,8 @@ if (!root) {
 let state = loadState();
 let activeAction = null;
 let activeActionTimer = null;
+let activeTreasureEvent = null;
+let activeTreasureEventTimer = null;
 
 const commit = (nextState) => {
   state = nextState;
@@ -37,7 +40,9 @@ const handleAction = (action) => {
 
 const handleReset = () => {
   activeAction = null;
+  activeTreasureEvent = null;
   window.clearTimeout(activeActionTimer);
+  window.clearTimeout(activeTreasureEventTimer);
   clearState();
   commit(createInitialState());
 };
@@ -46,11 +51,30 @@ const handleCollectTreasure = () => {
   commit(collectTreasure(state));
 };
 
+const handleUseTreasure = () => {
+  const result = useTreasure(state);
+
+  if (!result.event) {
+    return;
+  }
+
+  activeTreasureEvent = result.event;
+  window.clearTimeout(activeTreasureEventTimer);
+  commit(result.state);
+
+  activeTreasureEventTimer = window.setTimeout(() => {
+    activeTreasureEvent = null;
+    render();
+  }, 2_800);
+};
+
 function render() {
   renderApp(root, state, {
     activeAction,
+    activeTreasureEvent,
     onAction: handleAction,
     onCollectTreasure: handleCollectTreasure,
+    onUseTreasure: handleUseTreasure,
     onReset: handleReset
   });
 }

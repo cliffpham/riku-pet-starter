@@ -6,7 +6,8 @@ import {
   collectTreasure,
   createInitialState,
   getGrowthProgress,
-  getMood
+  getMood,
+  useTreasure
 } from "./logic.js";
 
 describe("pet logic", () => {
@@ -131,5 +132,44 @@ describe("pet logic", () => {
     const state = createInitialState(1);
 
     assert.strictEqual(collectTreasure(state, 2), state);
+  });
+
+  it("uses one treasure for a small event", () => {
+    const state = {
+      ...createInitialState(1),
+      stats: { hunger: 80, happiness: 70, energy: 80, cleanliness: 82 },
+      treasures: { pending: 0, collected: 1, cleanlinessDropBuffer: 0 }
+    };
+    const result = useTreasure(state, 2);
+
+    assert.equal(result.event.id, "snack");
+    assert.equal(result.state.treasures.collected, 0);
+    assert.equal(result.state.stats.hunger, 92);
+    assert.equal(result.state.stats.happiness, 78);
+    assert.equal(result.state.lastUpdatedAt, 2);
+  });
+
+  it("uses treasure count to choose a stronger event", () => {
+    const state = {
+      ...createInitialState(1),
+      stats: { hunger: 92, happiness: 90, energy: 94, cleanliness: 96 },
+      treasures: { pending: 0, collected: 5, cleanlinessDropBuffer: 0 }
+    };
+    const result = useTreasure(state, 2);
+
+    assert.equal(result.event.id, "festival");
+    assert.equal(result.state.treasures.collected, 4);
+    assert.equal(result.state.stats.hunger, 100);
+    assert.equal(result.state.stats.happiness, 100);
+    assert.equal(result.state.stats.energy, 100);
+    assert.equal(result.state.stats.cleanliness, 100);
+  });
+
+  it("does not use treasure when none are collected", () => {
+    const state = createInitialState(1);
+    const result = useTreasure(state, 2);
+
+    assert.strictEqual(result.state, state);
+    assert.equal(result.event, null);
   });
 });

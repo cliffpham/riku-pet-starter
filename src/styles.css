@@ -266,9 +266,9 @@ h1 {
 }
 
 .treasure-counter {
-  display: inline-flex;
+  display: grid;
+  grid-template-columns: auto auto 1fr auto;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
   min-height: 42px;
   padding: 8px 12px;
@@ -288,6 +288,58 @@ h1 {
 .treasure-counter strong {
   margin-left: auto;
   font-size: 1.1rem;
+}
+
+.treasure-use-button {
+  min-height: 30px;
+  padding: 0 12px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: #fff;
+  background: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.treasure-use-button:hover:not(:disabled) {
+  background: var(--accent-strong);
+}
+
+.treasure-use-button:disabled {
+  color: var(--muted);
+  border-color: var(--line);
+  background: #ece4d7;
+  cursor: not-allowed;
+}
+
+.treasure-event {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  z-index: 4;
+  width: min(82%, 360px);
+  display: grid;
+  gap: 4px;
+  padding: 12px 14px;
+  border: 1px solid rgb(47 143 131 / 28%);
+  border-radius: 8px;
+  color: var(--ink);
+  background: rgb(255 253 248 / 94%);
+  box-shadow: 0 14px 32px rgb(61 48 32 / 18%);
+  text-align: center;
+  transform: translateX(-50%);
+  animation: treasure-event-pop 2.8s ease both;
+}
+
+.treasure-event strong {
+  font-size: 1rem;
+}
+
+.treasure-event span {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.35;
 }
 
 .status-panel {
@@ -534,6 +586,22 @@ h1 {
   }
 }
 
+@keyframes treasure-event-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 12px) scale(0.96);
+  }
+  10%,
+  82% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -10px) scale(0.98);
+  }
+}
+
 @media (max-width: 760px) {
   #app {
     align-items: start;
@@ -554,5 +622,13 @@ h1 {
 
   .actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .treasure-counter {
+    grid-template-columns: auto auto 1fr;
+  }
+
+  .treasure-use-button {
+    grid-column: 1 / -1;
   }
 }

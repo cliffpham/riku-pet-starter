@@ -170,6 +170,73 @@ export const collectTreasure = (state, now = Date.now()) => {
   };
 };
 
+export const getTreasureEvent = (treasureCount) => {
+  if (treasureCount >= 5) {
+    return {
+      id: "festival",
+      title: "星まつり",
+      message: "宝物が光って、みんなの調子が上がりました。",
+      stats: {
+        hunger: 12,
+        happiness: 18,
+        energy: 12,
+        cleanliness: 12
+      }
+    };
+  }
+
+  if (treasureCount >= 2) {
+    return {
+      id: "charm",
+      title: "きらめくお守り",
+      message: "宝物がお守りに変わって、元気がわいてきました。",
+      stats: {
+        happiness: 10,
+        energy: 16
+      }
+    };
+  }
+
+  return {
+    id: "snack",
+    title: "ひみつのおやつ",
+    message: "宝物の中から小さなおやつが出てきました。",
+    stats: {
+      hunger: 12,
+      happiness: 8
+    }
+  };
+};
+
+export const useTreasure = (state, now = Date.now()) => {
+  const treasures = normalizeTreasures(state.treasures);
+
+  if (treasures.collected <= 0) {
+    return { state, event: null };
+  }
+
+  const event = getTreasureEvent(treasures.collected);
+  const nextStats = updateStats(state.stats, {
+    hunger: state.stats.hunger + (event.stats.hunger ?? 0),
+    happiness: state.stats.happiness + (event.stats.happiness ?? 0),
+    energy: state.stats.energy + (event.stats.energy ?? 0),
+    cleanliness: state.stats.cleanliness + (event.stats.cleanliness ?? 0)
+  });
+
+  return {
+    state: {
+      ...state,
+      stats: nextStats,
+      treasures: {
+        ...treasures,
+        collected: treasures.collected - 1
+      },
+      lastUpdatedAt: now
+    },
+    event
+  };
+};
+
 export const advanceTime = (
   state,
   minutes = SIMULATED_MINUTES_PER_TICK,

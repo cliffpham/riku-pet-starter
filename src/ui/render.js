@@ -72,11 +72,23 @@ const renderPendingTreasures = (pendingTreasures) => {
   `;
 };
 
+const renderTreasureEvent = (event) => {
+  if (!event) return "";
+
+  return `
+    <div class="treasure-event" role="status">
+      <strong>${event.title}</strong>
+      <span>${event.message}</span>
+    </div>
+  `;
+};
+
 export const renderApp = (root, state, options) => {
   const mood = getMood(state);
   const growth = getGrowthProgress(state);
   const petArt = getPetArt(state.stage, mood);
   const activeAction = options.activeAction ?? "";
+  const activeTreasureEvent = options.activeTreasureEvent ?? null;
   const pendingTreasures = clampDisplayCount(state.treasures?.pending);
   const collectedTreasures = clampDisplayCount(state.treasures?.collected);
   const actions = Object.keys(actionLabels);
@@ -101,6 +113,7 @@ export const renderApp = (root, state, options) => {
           }
           <div class="shadow"></div>
           ${renderPendingTreasures(pendingTreasures)}
+          ${renderTreasureEvent(activeTreasureEvent)}
         </div>
 
         <aside class="status-panel" aria-live="polite">
@@ -112,6 +125,9 @@ export const renderApp = (root, state, options) => {
             ${renderTreasureIcon()}
             <span>宝物</span>
             <strong>${collectedTreasures}</strong>
+            <button class="treasure-use-button" type="button" data-use-treasure ${collectedTreasures <= 0 ? "disabled" : ""}>
+              使う
+            </button>
           </div>
           <p class="message">${getStatusMessage(state)}</p>
           <p class="age">年齢: ${formatAge(state.ageMinutes)}</p>
@@ -155,6 +171,10 @@ export const renderApp = (root, state, options) => {
       button.addEventListener("click", options.onCollectTreasure);
     });
   }
+
+  root
+    .querySelector("[data-use-treasure]")
+    ?.addEventListener("click", options.onUseTreasure);
 
   root.querySelector("[data-reset]")?.addEventListener("click", options.onReset);
 };
